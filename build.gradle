@@ -37,6 +37,9 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    // queryDSL
+    implementation("com.querydsl:querydsl-jpa")
+    annotationProcessor("com.querydsl:querydsl-apt")
 }
 
 tasks.named('test') {
