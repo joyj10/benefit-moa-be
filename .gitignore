@@ -41,3 +41,6 @@ out/
 
 # secret yml files
 /src/main/resources/application-secret.yml
+
+# Qclass
+/src/main/generated/

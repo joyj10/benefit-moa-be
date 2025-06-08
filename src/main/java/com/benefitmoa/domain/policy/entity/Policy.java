@@ -53,4 +53,9 @@ public class Policy extends BaseTimeEntity {
             throw new InvalidException("정책 요약은 null이거나 공백일 수 없습니다.");
         }
     }
+
+    public void addDetail(PolicyDetail detail) {
+        details.add(detail);
+        detail.setPolicy(this);  // 연관 관계 설정
+    }
 }

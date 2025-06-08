@@ -7,11 +7,7 @@ import com.benefitmoa.domain.policy.service.PolicyService;
 import com.benefitmoa.global.response.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,7 +17,7 @@ public class AdminPolicyController {
 
     @PostMapping
     public ApiResponse<PolicyResponse> createPolicy(@RequestBody @Valid CreatePolicyRequest policyRequest) {
-        Policy policy = policyService.create(policyRequest.getTitle(), policyRequest.getSummary());
+        Policy policy = policyService.create(policyRequest);
         return ApiResponse.success(PolicyResponse.from(policy));
     }
 }

@@ -49,4 +49,8 @@ public class PolicyDetail extends BaseTimeEntity {
         return detail;
     }
 
+    void setPolicy(Policy policy) {
+        this.policy = policy;
+    }
+
 }
