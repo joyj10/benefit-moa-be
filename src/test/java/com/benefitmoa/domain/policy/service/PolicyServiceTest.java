@@ -78,9 +78,7 @@ class PolicyServiceTest {
                 .build();
 
         // when & then
-        InvalidException exception = assertThrows(InvalidException.class, () -> {
-            policyService.create(policyRequest);
-        });
+        InvalidException exception = assertThrows(InvalidException.class, () -> policyService.create(policyRequest));
 
         assertEquals("정책 제목은 null이거나 공백일 수 없습니다.", exception.getMessage());
     }
