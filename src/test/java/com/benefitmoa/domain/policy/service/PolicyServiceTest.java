@@ -2,6 +2,7 @@ package com.benefitmoa.domain.policy.service;
 
 import com.benefitmoa.api.policy.dto.PolicyDetailRequest;
 import com.benefitmoa.api.policy.dto.PolicyRequest;
+import com.benefitmoa.api.policy.dto.PolicyResponse;
 import com.benefitmoa.domain.policy.entity.Policy;
 import com.benefitmoa.domain.policy.entity.PolicyDetail;
 import com.benefitmoa.domain.policy.entity.TargetType;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -157,9 +159,7 @@ class PolicyServiceTest {
                 .build();
 
         // when & then
-        NotFoundException exception = assertThrows(NotFoundException.class, () -> {
-            policyService.update(policyId, request);
-        });
+        NotFoundException exception = assertThrows(NotFoundException.class, () -> policyService.update(policyId, request));
 
         assertTrue(exception.getMessage().contains("PolicyId: 999"));
     }
@@ -187,9 +187,50 @@ class PolicyServiceTest {
         when(policyRepository.findById(policyId)).thenReturn(Optional.empty());
 
         // when & then
-        NotFoundException exception = assertThrows(NotFoundException.class, () -> {
-            policyService.delete(policyId);
-        });
+        NotFoundException exception = assertThrows(NotFoundException.class, () -> policyService.delete(policyId));
         assertTrue(exception.getMessage().contains("PolicyId: 999"));
     }
+
+    @Test
+    @DisplayName("정책 단건 조회 - 성공 : 존재하는 정책 ID 조회 시 상세 정보 반환")
+    void testGetPolicy_success() {
+        // given
+        Long policyId = 1L;
+        Policy mockPolicy = mock(Policy.class);
+
+        // Policy 엔티티의 getter 동작 설정
+        when(mockPolicy.getId()).thenReturn(policyId);
+        when(mockPolicy.getTitle()).thenReturn("테스트 정책");
+        when(mockPolicy.getSummary()).thenReturn("테스트 요약");
+        when(mockPolicy.getViewCount()).thenReturn(100);
+        when(mockPolicy.getDetails()).thenReturn(Collections.emptyList());
+
+        when(policyRepository.findById(policyId)).thenReturn(Optional.of(mockPolicy));
+
+        // when
+        PolicyResponse response = policyService.getPolicy(policyId);
+
+        // then
+        assertNotNull(response);
+        assertEquals(policyId, response.getPolicyId());
+        assertEquals("테스트 정책", response.getTitle());
+        assertEquals("테스트 요약", response.getSummary());
+        assertEquals(100, response.getViewCount());
+        assertNotNull(response.getDetailResponses());
+        assertTrue(response.getDetailResponses().isEmpty());
+    }
+
+    @Test
+    @DisplayName("정책 단건 조회 - 실패 : 존재하지 않는 정책 ID 조회 시 예외 발생")
+    void testGetPolicy_notFound() {
+        // given
+        Long policyId = 999L;
+        when(policyRepository.findById(policyId)).thenReturn(Optional.empty());
+
+        // when & then
+        NotFoundException exception = assertThrows(NotFoundException.class, () -> policyService.getPolicy(policyId));
+        assertTrue(exception.getMessage().contains("PolicyId: 999"));
+    }
+
+
 }

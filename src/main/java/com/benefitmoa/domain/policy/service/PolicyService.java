@@ -2,6 +2,7 @@ package com.benefitmoa.domain.policy.service;
 
 import com.benefitmoa.api.policy.dto.PolicyDetailRequest;
 import com.benefitmoa.api.policy.dto.PolicyRequest;
+import com.benefitmoa.api.policy.dto.PolicyResponse;
 import com.benefitmoa.domain.policy.entity.Policy;
 import com.benefitmoa.domain.policy.entity.PolicyDetail;
 import com.benefitmoa.domain.policy.repository.PolicyRepository;
@@ -54,7 +55,7 @@ public class PolicyService {
 
     @Transactional
     public Policy update(Long policyId, PolicyRequest policyRequest) {
-        Policy policy = getPolicy(policyId);
+        Policy policy = getById(policyId);
         policy.update(policyRequest.getTitle(), policyRequest.getSummary());
 
         // 기존 details 비교 및 수정
@@ -106,13 +107,19 @@ public class PolicyService {
 
     @Transactional
     public void delete(Long policyId) {
-        Policy policy = getPolicy(policyId);
+        Policy policy = getById(policyId);
         policy.clearDetails();
         policyRepository.delete(policy);
     }
 
-    private Policy getPolicy(Long policyId) {
+    private Policy getById(Long policyId) {
         return policyRepository.findById(policyId)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND.getMessage() + " (PolicyId: " + policyId + ")"));
+    }
+
+    @Transactional(readOnly = true)
+    public PolicyResponse getPolicy(Long id) {
+        Policy policy = getById(id);
+        return PolicyResponse.from(policy);
     }
 }
