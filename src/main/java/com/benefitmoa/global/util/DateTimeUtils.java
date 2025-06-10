@@ -8,6 +8,10 @@ import java.time.format.DateTimeParseException;
 
 public class DateTimeUtils {
 
+    private DateTimeUtils() {
+        throw new IllegalStateException("Utility class");
+    }
+
     private static final DateTimeFormatter DEFAULT_FORMATTER =
             DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 

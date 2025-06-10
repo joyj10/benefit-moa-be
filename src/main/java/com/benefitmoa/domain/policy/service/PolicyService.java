@@ -1,7 +1,7 @@
 package com.benefitmoa.domain.policy.service;
 
-import com.benefitmoa.api.policy.dto.PolicyRequest;
 import com.benefitmoa.api.policy.dto.PolicyDetailRequest;
+import com.benefitmoa.api.policy.dto.PolicyRequest;
 import com.benefitmoa.domain.policy.entity.Policy;
 import com.benefitmoa.domain.policy.entity.PolicyDetail;
 import com.benefitmoa.domain.policy.repository.PolicyRepository;
@@ -54,9 +54,7 @@ public class PolicyService {
 
     @Transactional
     public Policy update(Long policyId, PolicyRequest policyRequest) {
-        Policy policy = policyRepository.findById(policyId)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND.getMessage() + " (PolicyId: " + policyId + ")"));
-
+        Policy policy = getPolicy(policyId);
         policy.update(policyRequest.getTitle(), policyRequest.getSummary());
 
         // 기존 details 비교 및 수정
@@ -79,7 +77,7 @@ public class PolicyService {
                         detailRequest.getApplicationMethod()
                 );
                 updatedDetails.add(detail);
-                existingDetails.remove(detailId); // 남은 건 삭제 대상으로 판단
+                existingDetails.remove(detailId); // 남은 건 삭제 대상
             } else {
                 PolicyDetail newDetail = PolicyDetail.create(
                         policy,
@@ -96,7 +94,7 @@ public class PolicyService {
 
         // PolicyDetail 삭제: 요청에 없는 기존 디테일
         for (PolicyDetail toRemove : existingDetails.values()) {
-            policy.removeDetail(toRemove); // removeDetail 메서드 필요
+            policy.removeDetail(toRemove);
         }
 
         // 업데이트된 리스트로 교체
@@ -104,5 +102,17 @@ public class PolicyService {
         policy.addDetails(updatedDetails);
 
         return policy;
+    }
+
+    @Transactional
+    public void delete(Long policyId) {
+        Policy policy = getPolicy(policyId);
+        policy.clearDetails();
+        policyRepository.delete(policy);
+    }
+
+    private Policy getPolicy(Long policyId) {
+        return policyRepository.findById(policyId)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND.getMessage() + " (PolicyId: " + policyId + ")"));
     }
 }

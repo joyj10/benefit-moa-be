@@ -33,7 +33,7 @@ class PolicyServiceTest {
 
     @Test
     @DisplayName("정책 등록 - 성공 : 저장된 Policy 반환")
-    void testCreatePolicy() {
+    void testCreatePolicy_success() {
         // given
         String title = "청년 주거 지원";
         String summary = "서울시 청년 대상 주거비(월세) 지원 정책";
@@ -68,7 +68,7 @@ class PolicyServiceTest {
 
     @Test
     @DisplayName("정책 등록 - 실패 : title이 빈값이면 예외 발생")
-    void testCreatePolicy_withNullTitle_throwsException() {
+    void testCreatePolicy_invalid() {
         // given
         String title = " "; // 공백 제목 (빈값 테스트)
         String summary = "서울시 청년 대상 주거비(월세) 지원 정책";
@@ -161,6 +161,35 @@ class PolicyServiceTest {
             policyService.update(policyId, request);
         });
 
+        assertTrue(exception.getMessage().contains("PolicyId: 999"));
+    }
+
+    @Test
+    @DisplayName("정책 삭제 - 성공 : 존재하는 정책 ID 삭제 시 정상적으로 삭제")
+    void testDeletePolicy_success() {
+        // given
+        Long policyId = 1L;
+        Policy mockPolicy = mock(Policy.class);
+        when(policyRepository.findById(policyId)).thenReturn(Optional.of(mockPolicy));
+
+        // when
+        policyService.delete(policyId);
+
+        // then
+        verify(policyRepository).delete(mockPolicy);
+    }
+
+    @Test
+    @DisplayName("정책 삭제 - 실패 : 정책 ID가 존재하지 않을 경우 예외 발생")
+    void testDeletePolicy_notFound() {
+        // given
+        Long policyId = 999L;
+        when(policyRepository.findById(policyId)).thenReturn(Optional.empty());
+
+        // when & then
+        NotFoundException exception = assertThrows(NotFoundException.class, () -> {
+            policyService.delete(policyId);
+        });
         assertTrue(exception.getMessage().contains("PolicyId: 999"));
     }
 }

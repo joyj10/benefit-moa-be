@@ -28,4 +28,10 @@ public class AdminPolicyController {
         return ApiResponse.success(PolicyResponse.from(policy));
     }
 
+    @DeleteMapping("/{id}")
+    public ApiResponse<Void> deletePolicy(@PathVariable Long id) {
+        policyService.delete(id);
+        return ApiResponse.success(null);
+    }
+
 }
