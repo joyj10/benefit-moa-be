@@ -49,7 +49,18 @@ public class PolicyDetail extends BaseTimeEntity {
         return detail;
     }
 
-    void setPolicy(Policy policy) {
+    public void update(String region, String sourceUrl, TargetType target, LocalDateTime deadline,
+                       String supportContent, String applicationMethod) {
+        this.region = region;
+        this.sourceUrl = sourceUrl;
+        this.target = target;
+        this.deadline = deadline;
+        this.supportContent = supportContent;
+        this.applicationMethod = applicationMethod;
+    }
+
+    // 연관 관계 편의 메서드
+    public void setPolicy(Policy policy) {
         this.policy = policy;
     }
 

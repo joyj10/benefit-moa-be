@@ -54,8 +54,28 @@ public class Policy extends BaseTimeEntity {
         }
     }
 
+    public void update(String title, String summary) {
+        validate(title, summary);
+        this.title = title;
+        this.summary = summary;
+    }
+
+    // 연관 관계 편의 메서드
+    public void addDetails(List<PolicyDetail> details) {
+        details.forEach(this::addDetail);
+    }
+
     public void addDetail(PolicyDetail detail) {
-        details.add(detail);
-        detail.setPolicy(this);  // 연관 관계 설정
+        this.details.add(detail);
+        detail.setPolicy(this);
+    }
+
+    public void removeDetail(PolicyDetail detail) {
+        details.remove(detail);
+        detail.setPolicy(null);
+    }
+
+    public void clearDetails() {
+        details.clear();
     }
 }

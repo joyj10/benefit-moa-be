@@ -1,22 +1,24 @@
 package com.benefitmoa.domain.policy.service;
 
-import com.benefitmoa.api.policy.dto.CreatePolicyRequest;
+import com.benefitmoa.api.policy.dto.PolicyDetailRequest;
+import com.benefitmoa.api.policy.dto.PolicyRequest;
 import com.benefitmoa.domain.policy.entity.Policy;
+import com.benefitmoa.domain.policy.entity.PolicyDetail;
 import com.benefitmoa.domain.policy.entity.TargetType;
 import com.benefitmoa.domain.policy.repository.PolicyRepository;
 import com.benefitmoa.global.exception.InvalidException;
-
+import com.benefitmoa.global.exception.NotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
+
+import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
-@SpringBootTest
 @DisplayName("정책 서비스 테스트")
 class PolicyServiceTest {
 
@@ -30,21 +32,26 @@ class PolicyServiceTest {
     }
 
     @Test
-    @DisplayName("정책 등록 시, 저장된 Policy 반환")
+    @DisplayName("정책 등록 - 성공 : 저장된 Policy 반환")
     void testCreatePolicy() {
         // given
         String title = "청년 주거 지원";
         String summary = "서울시 청년 대상 주거비(월세) 지원 정책";
 
-        CreatePolicyRequest policyRequest = CreatePolicyRequest.builder()
+        PolicyDetailRequest detailRequest = new PolicyDetailRequest(
+                null, // policyDetailId는 생성 시 없으니 null로 둬도 됨
+                "서울",
+                "https://www.test.com/test/1",
+                TargetType.YOUTH,
+                "2025-07-01T23:59:59",
+                "서울시 청년 대상 주거비(월세) 지원 정책 - 상반기",
+                "서울시 홈페이지 신청"
+        );
+
+        PolicyRequest policyRequest = PolicyRequest.builder()
                 .title(title)
                 .summary(summary)
-                .region("서울")
-                .deadline("2025-07-01T23:59:59")
-                .sourceUrl("https://www.test.com/test/1")
-                .target(TargetType.YOUTH)
-                .supportContent("서울시 청년 대상 주거비(월세) 지원 정책 - 상반기")
-                .applicationMethod("서울시 홈페이지 신청")
+                .policies(List.of(detailRequest))
                 .build();
 
         Policy expected = Policy.create(title, summary);
@@ -60,26 +67,100 @@ class PolicyServiceTest {
     }
 
     @Test
-    @DisplayName("정책 등록 시 title이 빈값이면 예외 발생")
+    @DisplayName("정책 등록 - 실패 : title이 빈값이면 예외 발생")
     void testCreatePolicy_withNullTitle_throwsException() {
         // given
-        String title = " ";
+        String title = " "; // 공백 제목 (빈값 테스트)
         String summary = "서울시 청년 대상 주거비(월세) 지원 정책";
 
-        CreatePolicyRequest policyRequest = CreatePolicyRequest.builder()
+        PolicyDetailRequest detailRequest = new PolicyDetailRequest(
+                null, // 신규 등록 시 policyDetailId는 없음
+                "서울",
+                "https://www.test.com/test/1",
+                TargetType.YOUTH,
+                "2025-07-01T23:59:59",
+                "서울시 청년 대상 주거비(월세) 지원 정책 - 상반기",
+                "서울시 홈페이지 신청"
+        );
+
+        PolicyRequest policyRequest = PolicyRequest.builder()
                 .title(title)
                 .summary(summary)
-                .region("서울")
-                .deadline("2025-07-01T23:59:59")
-                .sourceUrl("https://www.test.com/test/1")
-                .target(TargetType.YOUTH)
-                .supportContent("서울시 청년 대상 주거비(월세) 지원 정책 - 상반기")
-                .applicationMethod("서울시 홈페이지 신청")
+                .policies(List.of(detailRequest))
                 .build();
 
         // when & then
         InvalidException exception = assertThrows(InvalidException.class, () -> policyService.create(policyRequest));
 
         assertEquals("정책 제목은 null이거나 공백일 수 없습니다.", exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("정책 수정 - 성공 : 요청 데이터로 수정")
+    void testUpdatePolicy_success() {
+        // given
+        Long policyId = 1L;
+        Policy policy = mock(Policy.class);
+        PolicyDetail existingDetail = mock(PolicyDetail.class);
+
+        // 기존 PolicyDetail (id = 100)
+        when(existingDetail.getId()).thenReturn(100L);
+        when(policy.getDetails()).thenReturn(List.of(existingDetail));
+
+        // 요청 객체
+        PolicyDetailRequest detailRequest = new PolicyDetailRequest(
+                100L,
+                "서울",
+                "https://example.com",
+                TargetType.YOUTH,
+                "2025-07-01T23:59:59",
+                "지원내용",
+                "신청방법"
+        );
+        PolicyRequest policyRequest = PolicyRequest.builder()
+                .title("수정된 제목")
+                .summary("수정된 요약")
+                .policies(List.of(detailRequest))
+                .build();
+
+        when(policyRepository.findById(policyId)).thenReturn(Optional.of(policy));
+
+        // when
+        Policy result = policyService.update(policyId, policyRequest);
+
+        // then
+        verify(policy).update("수정된 제목", "수정된 요약");
+        verify(existingDetail).update(
+                eq("서울"),
+                eq("https://example.com"),
+                eq(TargetType.YOUTH),
+                any(), // LocalDateTime
+                eq("지원내용"),
+                eq("신청방법")
+        );
+        verify(policy).clearDetails();
+        verify(policy).addDetails(anyList());
+        assertNotNull(result);
+    }
+
+    @Test
+    @DisplayName("정책 수정 - 실패 : 정책 ID가 존재하지 않을 경우 예외 발생")
+    void testUpdatePolicy_notFound() {
+        // given
+        Long policyId = 999L;
+        when(policyRepository.findById(policyId)).thenReturn(Optional.empty());
+
+        PolicyRequest request = PolicyRequest.builder()
+                .title("테스트")
+                .summary("요약")
+                .policies(List.of())
+                .build();
+
+        // when & then
+        NotFoundException exception = assertThrows(NotFoundException.class, () -> {
+            policyService.update(policyId, request);
+        });
+
+        assertTrue(exception.getMessage().contains("PolicyId: 999"));
     }
 }

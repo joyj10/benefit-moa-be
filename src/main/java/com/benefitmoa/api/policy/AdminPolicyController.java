@@ -1,6 +1,6 @@
 package com.benefitmoa.api.policy;
 
-import com.benefitmoa.api.policy.dto.CreatePolicyRequest;
+import com.benefitmoa.api.policy.dto.PolicyRequest;
 import com.benefitmoa.api.policy.dto.PolicyResponse;
 import com.benefitmoa.domain.policy.entity.Policy;
 import com.benefitmoa.domain.policy.service.PolicyService;
@@ -16,8 +16,16 @@ public class AdminPolicyController {
     private final PolicyService policyService;
 
     @PostMapping
-    public ApiResponse<PolicyResponse> createPolicy(@RequestBody @Valid CreatePolicyRequest policyRequest) {
+    public ApiResponse<PolicyResponse> createPolicy(@RequestBody @Valid PolicyRequest policyRequest) {
         Policy policy = policyService.create(policyRequest);
         return ApiResponse.success(PolicyResponse.from(policy));
     }
+
+    @PatchMapping("/{id}")
+    public ApiResponse<PolicyResponse> updatePolicy(@PathVariable Long id,
+                                                    @RequestBody @Valid PolicyRequest policyRequest) {
+        Policy policy = policyService.update(id, policyRequest);
+        return ApiResponse.success(PolicyResponse.from(policy));
+    }
+
 }

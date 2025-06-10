@@ -9,21 +9,20 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@Builder
-@NoArgsConstructor
 @AllArgsConstructor
-public class CreatePolicyRequest {
-    @NotBlank
-    private String title;
+@NoArgsConstructor
+@Builder
+public class PolicyDetailRequest {
+
+    @NotNull
+    private Long policyDetailId;
 
     @NotBlank
-    private String summary;
-
     private String region;
 
     private String sourceUrl;
 
-    @NotNull
+    @NotBlank
     private TargetType target;
 
     private String deadline;
