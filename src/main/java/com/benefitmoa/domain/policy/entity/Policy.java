@@ -31,13 +31,11 @@ public class Policy extends BaseTimeEntity {
     @OneToMany(mappedBy = "policy", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PolicyDetail> details = new ArrayList<>();
 
-    // 정적 생성 메서드
     public static Policy create(String title, String summary) {
         validate(title, summary);
         return new Policy(title, summary);
     }
 
-    // private 생성자 사용
     private Policy(String title, String summary) {
         this.title = title;
         this.summary = summary;
