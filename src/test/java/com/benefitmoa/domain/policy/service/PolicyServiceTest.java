@@ -3,6 +3,7 @@ package com.benefitmoa.domain.policy.service;
 import com.benefitmoa.api.policy.dto.PolicyDetailRequest;
 import com.benefitmoa.api.policy.dto.PolicyRequest;
 import com.benefitmoa.api.policy.dto.PolicyResponse;
+import com.benefitmoa.api.policy.dto.PolicySearchCondition;
 import com.benefitmoa.domain.policy.entity.Policy;
 import com.benefitmoa.domain.policy.entity.PolicyDetail;
 import com.benefitmoa.domain.policy.entity.TargetType;
@@ -12,6 +13,10 @@ import com.benefitmoa.global.exception.NotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.Collections;
 import java.util.List;
@@ -231,6 +236,57 @@ class PolicyServiceTest {
         NotFoundException exception = assertThrows(NotFoundException.class, () -> policyService.getPolicy(policyId));
         assertTrue(exception.getMessage().contains("PolicyId: 999"));
     }
+
+    @Test
+    @DisplayName("정책 목록 조회 - 성공 : 조건에 맞는 정책 목록을 페이징으로 반환")
+    void testSearchPolicies_success() {
+        // given
+        PolicySearchCondition condition = new PolicySearchCondition("서울", TargetType.YOUTH, "주거");
+        Pageable pageable = PageRequest.of(0, 10);
+
+        Policy mockPolicy = mock(Policy.class);
+        when(mockPolicy.getId()).thenReturn(1L);
+        when(mockPolicy.getTitle()).thenReturn("청년 주거 지원");
+        when(mockPolicy.getSummary()).thenReturn("서울 청년 대상 주거 지원 정책");
+        when(mockPolicy.getViewCount()).thenReturn(500);
+        when(mockPolicy.getDetails()).thenReturn(Collections.emptyList());
+
+        Page<Policy> mockPage = new PageImpl<>(List.of(mockPolicy), pageable, 1);
+        when(policyRepository.searchByCondition(condition, pageable)).thenReturn(mockPage);
+
+        // when
+        Page<PolicyResponse> result = policyService.searchPolicies(condition, pageable);
+
+        // then
+        assertNotNull(result);
+        assertEquals(1, result.getTotalElements());
+        PolicyResponse policyResponse = result.getContent().get(0);
+        assertEquals(1L, policyResponse.getPolicyId());
+        assertEquals("청년 주거 지원", policyResponse.getTitle());
+        assertEquals("서울 청년 대상 주거 지원 정책", policyResponse.getSummary());
+        assertEquals(500, policyResponse.getViewCount());
+        assertTrue(policyResponse.getDetailResponses().isEmpty());
+    }
+
+    @Test
+    @DisplayName("정책 목록 조회 - 실패 : 조건에 맞는 정책이 없는 경우 빈 페이지 반환")
+    void testSearchPolicies_noResults() {
+        // given
+        PolicySearchCondition condition = new PolicySearchCondition("제주", TargetType.ALL, "문화");
+        Pageable pageable = PageRequest.of(0, 10);
+
+        when(policyRepository.searchByCondition(condition, pageable))
+                .thenReturn(Page.empty(pageable));
+
+        // when
+        Page<PolicyResponse> result = policyService.searchPolicies(condition, pageable);
+
+        // then
+        assertNotNull(result);
+        assertEquals(0, result.getTotalElements());
+        assertTrue(result.getContent().isEmpty());
+    }
+
 
 
 }

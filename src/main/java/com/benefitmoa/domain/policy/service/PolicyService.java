@@ -3,6 +3,7 @@ package com.benefitmoa.domain.policy.service;
 import com.benefitmoa.api.policy.dto.PolicyDetailRequest;
 import com.benefitmoa.api.policy.dto.PolicyRequest;
 import com.benefitmoa.api.policy.dto.PolicyResponse;
+import com.benefitmoa.api.policy.dto.PolicySearchCondition;
 import com.benefitmoa.domain.policy.entity.Policy;
 import com.benefitmoa.domain.policy.entity.PolicyDetail;
 import com.benefitmoa.domain.policy.repository.PolicyRepository;
@@ -11,6 +12,8 @@ import com.benefitmoa.global.exception.NotFoundException;
 import com.benefitmoa.global.util.DateTimeUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -121,5 +124,11 @@ public class PolicyService {
     public PolicyResponse getPolicy(Long id) {
         Policy policy = getById(id);
         return PolicyResponse.from(policy);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<PolicyResponse> searchPolicies(PolicySearchCondition condition, Pageable pageable) {
+        Page<Policy> policies = policyRepository.searchByCondition(condition, pageable);
+        return policies.map(PolicyResponse::from);
     }
 }

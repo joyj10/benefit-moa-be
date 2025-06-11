@@ -1,13 +1,14 @@
 package com.benefitmoa.api.policy;
 
 import com.benefitmoa.api.policy.dto.PolicyResponse;
+import com.benefitmoa.api.policy.dto.PolicySearchCondition;
+import com.benefitmoa.api.policy.dto.PolicySearchRequest;
 import com.benefitmoa.domain.policy.service.PolicyService;
 import com.benefitmoa.global.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,6 +19,15 @@ public class PolicyController {
     @GetMapping("/{id}")
     public ApiResponse<PolicyResponse> getPolicy(@PathVariable Long id) {
         PolicyResponse result = policyService.getPolicy(id);
+        return ApiResponse.success(result);
+    }
+
+    @GetMapping
+    public ApiResponse<Page<PolicyResponse>> getPolicies(@ModelAttribute PolicySearchRequest request) {
+        Pageable pageable = request.toPageable();
+        PolicySearchCondition condition = request.toCondition();
+
+        Page<PolicyResponse> result = policyService.searchPolicies(condition, pageable);
         return ApiResponse.success(result);
     }
 }
