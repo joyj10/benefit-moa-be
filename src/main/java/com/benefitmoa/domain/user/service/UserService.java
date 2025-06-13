@@ -3,8 +3,9 @@ package com.benefitmoa.domain.user.service;
 import com.benefitmoa.api.user.dto.ProfileRequest;
 import com.benefitmoa.domain.user.entity.User;
 import com.benefitmoa.domain.user.repository.UserRepository;
+import com.benefitmoa.global.exception.ErrorCode;
+import com.benefitmoa.global.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,10 +16,17 @@ public class UserService {
 
     @Transactional
     public User updateProfile(ProfileRequest profileRequest) {
-        User user = userRepository.findByEmail(profileRequest.getEmail())
-                .orElseThrow(() -> new UsernameNotFoundException("Email not found"));
+        String email = profileRequest.getEmail();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND.getMessage() + " (email: " + email + ")"));
 
         user.updateProfile(profileRequest.getName(), profileRequest.getNickname(), profileRequest.getPhone());
         return userRepository.save(user);
+    }
+
+    @Transactional(readOnly = true)
+    public User getById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND.getMessage() + " (userId: " + id + ")"));
     }
 }

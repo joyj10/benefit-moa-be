@@ -58,7 +58,7 @@ public class PolicyService {
 
     @Transactional
     public Policy update(Long policyId, PolicyRequest policyRequest) {
-        Policy policy = getById(policyId);
+        Policy policy = this.getById(policyId);
         policy.update(policyRequest.getTitle(), policyRequest.getSummary());
 
         // 기존 details 비교 및 수정
@@ -110,19 +110,20 @@ public class PolicyService {
 
     @Transactional
     public void delete(Long policyId) {
-        Policy policy = getById(policyId);
+        Policy policy = this.getById(policyId);
         policy.clearDetails();
         policyRepository.delete(policy);
     }
 
-    private Policy getById(Long policyId) {
+    @Transactional(readOnly = true)
+    public Policy getById(Long policyId) {
         return policyRepository.findById(policyId)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND.getMessage() + " (PolicyId: " + policyId + ")"));
     }
 
     @Transactional(readOnly = true)
     public PolicyResponse getPolicy(Long id) {
-        Policy policy = getById(id);
+        Policy policy = this.getById(id);
         return PolicyResponse.from(policy);
     }
 
