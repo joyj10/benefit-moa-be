@@ -26,7 +26,7 @@ public class UserValidator {
 
     private static void validateEmail(String email) {
         if (!StringUtils.hasText(email) || !email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
-            throw new InvalidException(ErrorMessages.INVALID_EMAIL.getMessage());
+            throw new InvalidException(ErrorMessages.EMAIL_INVALID.getMessage());
         }
     }
 
@@ -49,8 +49,8 @@ public class UserValidator {
     }
 
     private static void validatePhone(String phone) {
-        if (!StringUtils.hasText(phone) || !phone.matches("^\\d{10,11}$")) {
-            throw new InvalidException(ErrorMessages.PHONE_REQUIRED.getMessage());
+        if (!StringUtils.hasText(phone) || !phone.matches("^01[016789]-\\d{3,4}-\\d{4}$")) {
+            throw new InvalidException(ErrorMessages.PHONE_INVALID.getMessage());
         }
     }
 }

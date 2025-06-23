@@ -1,13 +1,14 @@
 package com.benefitmoa.api.bookmark;
 
 import com.benefitmoa.api.bookmark.dto.BookmarkRequest;
+import com.benefitmoa.api.policy.dto.PolicyResponse;
 import com.benefitmoa.domain.bookmark.service.BookmarkService;
 import com.benefitmoa.global.response.ApiResponse;
+import com.benefitmoa.global.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/bookmarks")
@@ -21,4 +22,12 @@ public class BookmarkController {
         bookmarkService.create(bookmarkRequest);
         return ApiResponse.success(true);
     }
+
+    @GetMapping
+    public ApiResponse<List<PolicyResponse>> getBookmarks() {
+        Long userId = SecurityUtil.getCurrentUserId();
+        List<PolicyResponse> result = bookmarkService.getBookmarks(userId);
+        return ApiResponse.success(result);
+    }
+
 }

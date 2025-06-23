@@ -1,6 +1,7 @@
 package com.benefitmoa.domain.bookmark.service;
 
 import com.benefitmoa.api.bookmark.dto.BookmarkRequest;
+import com.benefitmoa.api.policy.dto.PolicyResponse;
 import com.benefitmoa.domain.bookmark.entity.Bookmark;
 import com.benefitmoa.domain.bookmark.repository.BookmarkRepository;
 import com.benefitmoa.domain.policy.entity.Policy;
@@ -11,6 +12,9 @@ import com.benefitmoa.global.exception.InvalidException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.util.ReflectionTestUtils;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -80,6 +84,31 @@ class BookmarkServiceTest {
         // when & then
         InvalidException exception = assertThrows(InvalidException.class, () -> bookmarkService.create(bookmarkRequest));
         assertEquals("사용자 정보는 null 일 수 없습니다.", exception.getMessage());
+    }
+
+    @DisplayName("북마크 리스트 조회 - 성공: 사용자의 북마크 리스트 반환")
+    @Test
+    void testGetBookmarks() {
+        // given
+        Long userId = 1L;
+        User user = User.create("test@example.com", "pw12341234", "홍길동", "nickname", "010-1234-5678");
+        ReflectionTestUtils.setField(user, "id", userId);
+
+        Policy policy = Policy.create("정책명", "설명");
+        ReflectionTestUtils.setField(policy, "id", 10L);
+
+        Bookmark bookmark = Bookmark.create(user, policy);
+        ReflectionTestUtils.setField(bookmark, "id", 100L);
+
+        when(userService.getById(userId)).thenReturn(user);
+        when(bookmarkRepository.findAllWithPolicyByUserId(userId)).thenReturn(List.of(bookmark));
+
+        // when
+        List<PolicyResponse> result = bookmarkService.getBookmarks(userId);
+
+        // then
+        assertEquals(1, result.size());
+        assertEquals("정책명", result.get(0).getTitle());
     }
 
 }

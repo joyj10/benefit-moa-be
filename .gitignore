@@ -44,3 +44,5 @@ out/
 
 # Qclass
 /src/main/generated/
+
+docker/mysql/.env

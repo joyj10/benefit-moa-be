@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @TestPropertySource(properties = {
-        "jwt.secret=test-secret-key"
+        "jwt.secret=test-secret-key-which-is-long-enough-to-pass-123456"
 })
 class JwtTokenProviderTest {
     @Autowired
@@ -20,13 +20,15 @@ class JwtTokenProviderTest {
     @Test
     void testCreateTokenAndValid() {
         long userId = 1L;
+        String name = "Test User";
+        String email = "test@test.com";
+
         // given & when
-        String token = jwtTokenProvider.createToken(userId);
+        String token = jwtTokenProvider.createToken(userId, name, email);
 
         // then
         assertNotNull(token);
         assertTrue(jwtTokenProvider.validateToken(token));
         assertEquals(jwtTokenProvider.getUserIdFromToken(token), userId);
-
     }
 }
