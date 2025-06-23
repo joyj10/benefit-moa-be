@@ -1,6 +1,6 @@
 package com.benefitmoa.global.util;
 
-import com.benefitmoa.auth.security.UserPrincipal;
+import com.benefitmoa.security.UserPrincipal;
 import com.benefitmoa.global.exception.UnauthorizedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

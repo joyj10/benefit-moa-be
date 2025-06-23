@@ -1,4 +1,4 @@
-package com.benefitmoa.auth.security;
+package com.benefitmoa.security;
 
 
 import jakarta.servlet.FilterChain;

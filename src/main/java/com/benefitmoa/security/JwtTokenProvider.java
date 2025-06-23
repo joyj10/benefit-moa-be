@@ -1,4 +1,4 @@
-package com.benefitmoa.auth.security;
+package com.benefitmoa.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;

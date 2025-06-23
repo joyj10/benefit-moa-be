@@ -1,5 +1,6 @@
 package com.benefitmoa.auth.security;
 
+import com.benefitmoa.security.JwtTokenProvider;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 class JwtTokenProviderTest {
     @Autowired
-    private  JwtTokenProvider jwtTokenProvider;
+    private JwtTokenProvider jwtTokenProvider;
 
     @DisplayName("토큰 생선 및 유효성 검사")
     @Test
