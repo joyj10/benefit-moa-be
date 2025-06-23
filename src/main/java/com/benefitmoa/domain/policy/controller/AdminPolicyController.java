@@ -1,7 +1,7 @@
-package com.benefitmoa.api.policy;
+package com.benefitmoa.domain.policy.controller;
 
-import com.benefitmoa.api.policy.dto.PolicyRequest;
-import com.benefitmoa.api.policy.dto.PolicyResponse;
+import com.benefitmoa.domain.policy.dto.PolicyRequest;
+import com.benefitmoa.domain.policy.dto.PolicyResponse;
 import com.benefitmoa.domain.policy.entity.Policy;
 import com.benefitmoa.domain.policy.service.PolicyService;
 import com.benefitmoa.global.response.ApiResponse;

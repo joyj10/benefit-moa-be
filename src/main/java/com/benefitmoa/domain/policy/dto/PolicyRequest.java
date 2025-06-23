@@ -1,4 +1,4 @@
-package com.benefitmoa.api.policy.dto;
+package com.benefitmoa.domain.policy.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;

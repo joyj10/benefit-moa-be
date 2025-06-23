@@ -1,4 +1,4 @@
-package com.benefitmoa.api.bookmark.dto;
+package com.benefitmoa.domain.bookmark.dto;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;

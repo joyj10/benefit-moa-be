@@ -1,6 +1,6 @@
-package com.benefitmoa.auth.service;
+package com.benefitmoa.domain.user.auth.service;
 
-import com.benefitmoa.auth.dto.SignupRequest;
+import com.benefitmoa.domain.user.auth.dto.SignupRequest;
 import com.benefitmoa.domain.user.entity.User;
 import com.benefitmoa.domain.user.repository.UserRepository;
 import com.benefitmoa.global.exception.ErrorMessages;

@@ -1,7 +1,7 @@
-package com.benefitmoa.api.user;
+package com.benefitmoa.domain.user.controller;
 
-import com.benefitmoa.api.user.dto.ProfileRequest;
-import com.benefitmoa.api.user.dto.ProfileResponse;
+import com.benefitmoa.domain.user.dto.ProfileRequest;
+import com.benefitmoa.domain.user.dto.ProfileResponse;
 import com.benefitmoa.domain.user.entity.User;
 import com.benefitmoa.domain.user.service.UserService;
 import com.benefitmoa.global.response.ApiResponse;

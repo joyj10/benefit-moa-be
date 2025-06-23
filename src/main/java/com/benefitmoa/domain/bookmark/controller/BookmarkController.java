@@ -1,7 +1,7 @@
-package com.benefitmoa.api.bookmark;
+package com.benefitmoa.domain.bookmark.controller;
 
-import com.benefitmoa.api.bookmark.dto.BookmarkRequest;
-import com.benefitmoa.api.policy.dto.PolicyResponse;
+import com.benefitmoa.domain.bookmark.dto.BookmarkRequest;
+import com.benefitmoa.domain.policy.dto.PolicyResponse;
 import com.benefitmoa.domain.bookmark.service.BookmarkService;
 import com.benefitmoa.global.response.ApiResponse;
 import com.benefitmoa.global.util.SecurityUtil;

@@ -1,9 +1,9 @@
 package com.benefitmoa.domain.policy.service;
 
-import com.benefitmoa.api.policy.dto.PolicyDetailRequest;
-import com.benefitmoa.api.policy.dto.PolicyRequest;
-import com.benefitmoa.api.policy.dto.PolicyResponse;
-import com.benefitmoa.api.policy.dto.PolicySearchCondition;
+import com.benefitmoa.domain.policy.dto.PolicyDetailRequest;
+import com.benefitmoa.domain.policy.dto.PolicyRequest;
+import com.benefitmoa.domain.policy.dto.PolicyResponse;
+import com.benefitmoa.domain.policy.dto.PolicySearchCondition;
 import com.benefitmoa.domain.policy.entity.Policy;
 import com.benefitmoa.domain.policy.entity.PolicyDetail;
 import com.benefitmoa.domain.policy.entity.TargetType;

@@ -1,9 +1,9 @@
-package com.benefitmoa.auth.controller;
+package com.benefitmoa.domain.user.auth.controller;
 
-import com.benefitmoa.auth.dto.LoginRequest;
-import com.benefitmoa.auth.dto.LoginResponse;
-import com.benefitmoa.auth.dto.SignupRequest;
-import com.benefitmoa.auth.service.AuthService;
+import com.benefitmoa.domain.user.auth.dto.LoginRequest;
+import com.benefitmoa.domain.user.auth.dto.LoginResponse;
+import com.benefitmoa.domain.user.auth.dto.SignupRequest;
+import com.benefitmoa.domain.user.auth.service.AuthService;
 import com.benefitmoa.domain.user.entity.User;
 import com.benefitmoa.global.response.ApiResponse;
 import com.benefitmoa.security.JwtTokenProvider;

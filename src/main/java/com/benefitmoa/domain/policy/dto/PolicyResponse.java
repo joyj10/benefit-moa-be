@@ -1,7 +1,6 @@
-package com.benefitmoa.api.policy.dto;
+package com.benefitmoa.domain.policy.dto;
 
 import com.benefitmoa.domain.policy.entity.Policy;
-import com.benefitmoa.domain.policy.entity.PolicyDetail;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -9,7 +8,6 @@ import lombok.NoArgsConstructor;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
 @NoArgsConstructor

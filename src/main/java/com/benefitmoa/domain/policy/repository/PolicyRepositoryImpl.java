@@ -1,6 +1,6 @@
 package com.benefitmoa.domain.policy.repository;
 
-import com.benefitmoa.api.policy.dto.PolicySearchCondition;
+import com.benefitmoa.domain.policy.dto.PolicySearchCondition;
 import com.benefitmoa.domain.policy.entity.Policy;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.OrderSpecifier;
