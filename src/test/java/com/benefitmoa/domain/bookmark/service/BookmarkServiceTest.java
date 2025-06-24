@@ -1,17 +1,20 @@
 package com.benefitmoa.domain.bookmark.service;
 
 import com.benefitmoa.domain.bookmark.dto.BookmarkRequest;
-import com.benefitmoa.domain.policy.dto.PolicyResponse;
 import com.benefitmoa.domain.bookmark.entity.Bookmark;
 import com.benefitmoa.domain.bookmark.repository.BookmarkRepository;
+import com.benefitmoa.domain.policy.dto.PolicyResponse;
 import com.benefitmoa.domain.policy.entity.Policy;
 import com.benefitmoa.domain.policy.service.PolicyService;
 import com.benefitmoa.domain.user.entity.User;
 import com.benefitmoa.domain.user.service.UserService;
 import com.benefitmoa.global.exception.InvalidException;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.List;
@@ -20,21 +23,20 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+
 @DisplayName("북마크 서비스 테스트")
+@ExtendWith(MockitoExtension.class)
 class BookmarkServiceTest {
 
-    private BookmarkService bookmarkService;
+    @Mock
     private BookmarkRepository bookmarkRepository;
+    @Mock
     private UserService userService;
+    @Mock
     private PolicyService policyService;
 
-    @BeforeEach
-    void setUp() {
-        bookmarkRepository = mock(BookmarkRepository.class);
-        userService = mock(UserService.class);
-        policyService = mock(PolicyService.class);
-        bookmarkService = new BookmarkService(bookmarkRepository, userService, policyService);
-    }
+    @InjectMocks
+    private BookmarkService bookmarkService;
 
     @Test
     @DisplayName("북마크 생성 - 성공 : 저장된 북마크 id 반환")

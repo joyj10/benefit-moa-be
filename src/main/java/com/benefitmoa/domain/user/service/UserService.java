@@ -1,5 +1,6 @@
 package com.benefitmoa.domain.user.service;
 
+import com.benefitmoa.domain.user.auth.dto.UserResponse;
 import com.benefitmoa.domain.user.dto.ProfileRequest;
 import com.benefitmoa.domain.user.entity.User;
 import com.benefitmoa.domain.user.repository.UserRepository;
@@ -15,11 +16,8 @@ public class UserService {
     private final UserRepository userRepository;
 
     @Transactional
-    public User updateProfile(ProfileRequest profileRequest) {
-        String email = profileRequest.getEmail();
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND.getMessage() + " (email: " + email + ")"));
-
+    public User updateProfile(Long userId, ProfileRequest profileRequest) {
+        User user = getById(userId);
         user.updateProfile(profileRequest.getName(), profileRequest.getNickname(), profileRequest.getPhone());
         return userRepository.save(user);
     }
@@ -28,5 +26,10 @@ public class UserService {
     public User getById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND.getMessage() + " (userId: " + id + ")"));
+    }
+
+    @Transactional(readOnly = true)
+    public UserResponse getUserInfo(Long id) {
+        return UserResponse.from(getById(id));
     }
 }

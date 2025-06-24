@@ -10,9 +10,12 @@ import com.benefitmoa.domain.policy.entity.TargetType;
 import com.benefitmoa.domain.policy.repository.PolicyRepository;
 import com.benefitmoa.global.exception.InvalidException;
 import com.benefitmoa.global.exception.NotFoundException;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -27,16 +30,15 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @DisplayName("정책 서비스 테스트")
+@ExtendWith(MockitoExtension.class)
 class PolicyServiceTest {
 
+    @InjectMocks
     private PolicyService policyService;
+
+    @Mock
     private PolicyRepository policyRepository;
 
-    @BeforeEach
-    void setUp() {
-        policyRepository = mock(PolicyRepository.class);
-        policyService = new PolicyService(policyRepository);
-    }
 
     @Test
     @DisplayName("정책 등록 - 성공 : 저장된 Policy 반환")

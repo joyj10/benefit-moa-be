@@ -1,6 +1,5 @@
-package com.benefitmoa.auth.security;
+package com.benefitmoa.security;
 
-import com.benefitmoa.security.JwtTokenProvider;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +8,7 @@ import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@DisplayName("JWT token 서비스 테스트")
 @SpringBootTest
 @TestPropertySource(properties = {
         "jwt.secret=test-secret-key-which-is-long-enough-to-pass-123456"

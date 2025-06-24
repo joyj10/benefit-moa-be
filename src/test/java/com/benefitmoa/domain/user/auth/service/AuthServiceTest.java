@@ -1,33 +1,30 @@
-package com.benefitmoa.auth.service;
+package com.benefitmoa.domain.user.auth.service;
 
 import com.benefitmoa.domain.user.auth.dto.SignupRequest;
-import com.benefitmoa.domain.user.auth.service.AuthService;
 import com.benefitmoa.domain.user.entity.User;
 import com.benefitmoa.domain.user.repository.UserRepository;
-import com.benefitmoa.domain.user.service.UserService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.mockito.Mockito.*;
 
-@DisplayName("auth 서비스 테스트")
+@ExtendWith(MockitoExtension.class)
+@DisplayName("Auth 서비스 테스트")
 class AuthServiceTest {
 
-    private AuthService authService;
-    private UserService userService;
+    @Mock
     private UserRepository userRepository;
+
+    @Mock
     private PasswordEncoder passwordEncoder;
 
-    @BeforeEach
-    void setUp() {
-        authService = mock(AuthService.class);
-        userService = mock(UserService.class);
-        userRepository = mock(UserRepository.class);
-        passwordEncoder = mock(PasswordEncoder.class);
-
-    }
+    @InjectMocks
+    private AuthService authService;
 
     @DisplayName("회원가입 - 성공: 유효한 요청 시 회원가입 성공")
     @Test
@@ -45,7 +42,10 @@ class AuthServiceTest {
                 .build();
 
         when(userRepository.existsByEmail(email)).thenReturn(false);
-        when(passwordEncoder.encode(password)).thenReturn("encodedPassword");
+
+        String encodedPassword = "encoded-password123";
+        when(passwordEncoder.encode(password)).thenReturn(encodedPassword);
+
         when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
 
