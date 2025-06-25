@@ -1,15 +1,16 @@
 package com.benefitmoa.domain.policy.dto;
 
-import com.benefitmoa.domain.policy.entity.TargetType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
-@AllArgsConstructor
+@Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class PolicySearchCondition {
-    private String region;
-    private TargetType target;
-    private String keyword;
+    private String keyword;      // 검색 키워드 (정책명, 요약 등)
+    private String category;     // 서비스 분야 (예: 주거, 금융)
+    private String userType;     // 사용자 구분 (예: 개인, 가구)
 }

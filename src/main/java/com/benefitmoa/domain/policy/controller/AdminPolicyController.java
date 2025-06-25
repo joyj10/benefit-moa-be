@@ -2,7 +2,6 @@ package com.benefitmoa.domain.policy.controller;
 
 import com.benefitmoa.domain.policy.dto.PolicyRequest;
 import com.benefitmoa.domain.policy.dto.PolicyResponse;
-import com.benefitmoa.domain.policy.entity.Policy;
 import com.benefitmoa.domain.policy.service.PolicyService;
 import com.benefitmoa.global.response.ApiResponse;
 import jakarta.validation.Valid;
@@ -17,15 +16,13 @@ public class AdminPolicyController {
 
     @PostMapping
     public ApiResponse<PolicyResponse> createPolicy(@RequestBody @Valid PolicyRequest policyRequest) {
-        Policy policy = policyService.create(policyRequest);
-        return ApiResponse.success(PolicyResponse.from(policy));
+        return ApiResponse.success(policyService.create(policyRequest));
     }
 
     @PatchMapping("/{id}")
     public ApiResponse<PolicyResponse> updatePolicy(@PathVariable Long id,
                                                     @RequestBody @Valid PolicyRequest policyRequest) {
-        Policy policy = policyService.update(id, policyRequest);
-        return ApiResponse.success(PolicyResponse.from(policy));
+        return ApiResponse.success(policyService.update(id, policyRequest));
     }
 
     @DeleteMapping("/{id}")

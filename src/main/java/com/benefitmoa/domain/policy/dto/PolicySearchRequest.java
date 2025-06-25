@@ -1,6 +1,5 @@
 package com.benefitmoa.domain.policy.dto;
 
-import com.benefitmoa.domain.policy.entity.TargetType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -16,22 +15,30 @@ public class PolicySearchRequest {
 
     private int page = 0;
     private int size = 20;
-    private String sort;
-    private String region;
-    private TargetType target;
-    private String keyword;
+    private String sort;             // e.g. "createdAt,desc"
+    private String category;         // 서비스 분야
+    private String userType;         // 사용자 유형
+    private String keyword;          // 키워드 검색
 
     public Pageable toPageable() {
         if (StringUtils.hasText(sort)) {
             String[] sortParts = sort.split(",");
             if (sortParts.length == 2) {
-                return PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(sortParts[1]), sortParts[0]));
+                try {
+                    return PageRequest.of(
+                            page,
+                            size,
+                            Sort.by(Sort.Direction.fromString(sortParts[1].trim()), sortParts[0].trim())
+                    );
+                } catch (IllegalArgumentException e) {
+                    // 무효한 정렬 방식 대응
+                }
             }
         }
         return PageRequest.of(page, size);
     }
 
     public PolicySearchCondition toCondition() {
-        return new PolicySearchCondition(region, target, keyword);
+        return new PolicySearchCondition(keyword, category, userType);
     }
 }

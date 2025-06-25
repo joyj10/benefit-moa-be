@@ -16,25 +16,51 @@ import java.util.List;
 public class PolicyResponse {
     private Long policyId;
     private String title;
-    private String summary;
+    private String userType;
+    private String detailUrl;
+    private String serviceSummary;
+    private String category;
+    private String selectionCriteria;
+    private String supportContent;
+    private String targetAudience;
+    private String supportType;
+    private String applicationPeriod;
+    private String applicationMethod;
+    private String contact;
+    private String receptionAgency;
+    private String serviceId;
+    private String departmentName;
+    private String organizationName;
+    private String organizationType;
+    private String organizationCode;
+    private String policyCreatedAt;
+    private String policyUpdatedAt;
     private int viewCount;
-    private List<PolicyDetailResponse> detailResponses;
 
     public static PolicyResponse from(Policy policy) {
-        return from(policy, convertDetails(policy));
-    }
-
-    private static List<PolicyDetailResponse> convertDetails(Policy policy) {
-        return policy.getDetails().stream().map(PolicyDetailResponse::from).toList();
-    }
-
-    public static PolicyResponse from(Policy policy, List<PolicyDetailResponse> detailResponses) {
         return PolicyResponse.builder()
                 .policyId(policy.getId())
                 .title(policy.getTitle())
-                .summary(policy.getSummary())
+                .userType(policy.getUserType())
+                .detailUrl(policy.getDetailUrl())
+                .serviceSummary(policy.getServiceSummary())
+                .category(policy.getCategory())
+                .selectionCriteria(policy.getSelectionCriteria())
+                .supportContent(policy.getSupportContent())
+                .targetAudience(policy.getTargetAudience())
+                .supportType(policy.getSupportType())
+                .applicationPeriod(policy.getApplicationPeriod())
+                .applicationMethod(policy.getApplicationMethod())
+                .contact(policy.getContact())
+                .receptionAgency(policy.getReceptionAgency())
+                .serviceId(policy.getServiceId())
+                .departmentName(policy.getDepartmentName())
+                .organizationName(policy.getOrganizationName())
+                .organizationType(policy.getOrganizationType())
+                .organizationCode(policy.getOrganizationCode())
+                .policyCreatedAt(policy.getPolicyCreatedAt())
+                .policyUpdatedAt(policy.getPolicyUpdatedAt())
                 .viewCount(policy.getViewCount())
-                .detailResponses(detailResponses != null ? detailResponses : Collections.emptyList())
                 .build();
     }
 }

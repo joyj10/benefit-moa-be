@@ -1,17 +1,11 @@
 package com.benefitmoa.domain.policy.dto;
 
-import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@Builder
 @NoArgsConstructor
-@AllArgsConstructor
-public class PolicyRequest {
-    @NotBlank
+public class PublicDataPolicy {
     private String title; // 정책명
     private String userType; // 사용자 구분
     private String detailUrl; // 상세 URL
@@ -30,5 +24,8 @@ public class PolicyRequest {
     private String organizationName; // 기관명
     private String organizationType; // 기관 유형
     private String organizationCode; // 기관 코드
-
+    private String policyCreatedAt; // 등록일시
+    private String policyUpdatedAt; // 수정일시
+    private int viewCount; // 조회 수
 }
+

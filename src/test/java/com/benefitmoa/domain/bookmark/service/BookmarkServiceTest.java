@@ -3,6 +3,7 @@ package com.benefitmoa.domain.bookmark.service;
 import com.benefitmoa.domain.bookmark.dto.BookmarkRequest;
 import com.benefitmoa.domain.bookmark.entity.Bookmark;
 import com.benefitmoa.domain.bookmark.repository.BookmarkRepository;
+import com.benefitmoa.domain.policy.dto.PolicyRequest;
 import com.benefitmoa.domain.policy.dto.PolicyResponse;
 import com.benefitmoa.domain.policy.entity.Policy;
 import com.benefitmoa.domain.policy.service.PolicyService;
@@ -96,7 +97,13 @@ class BookmarkServiceTest {
         User user = User.create("test@example.com", "pw12341234", "홍길동", "nickname", "010-1234-5678");
         ReflectionTestUtils.setField(user, "id", userId);
 
-        Policy policy = Policy.create("정책명", "설명");
+        PolicyRequest request = PolicyRequest.builder()
+                .title("정책명")
+                .serviceSummary("설명")
+                .userType("개인")
+                .category("청년")
+                .build();
+        Policy policy = Policy.from(request);
         ReflectionTestUtils.setField(policy, "id", 10L);
 
         Bookmark bookmark = Bookmark.create(user, policy);

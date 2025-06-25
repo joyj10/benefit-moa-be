@@ -16,7 +16,6 @@ import java.util.Objects;
 import java.util.stream.StreamSupport;
 
 import static com.benefitmoa.domain.policy.entity.QPolicy.policy;
-import static com.benefitmoa.domain.policy.entity.QPolicyDetail.policyDetail;
 
 @RequiredArgsConstructor
 public class PolicyRepositoryImpl implements PolicyRepositoryCustom {
@@ -27,8 +26,6 @@ public class PolicyRepositoryImpl implements PolicyRepositoryCustom {
     public Page<Policy> searchByCondition(PolicySearchCondition condition, Pageable pageable) {
         List<Policy> content = queryFactory
                 .selectFrom(policy)
-                .distinct()
-                .leftJoin(policy.details, policyDetail).fetchJoin()
                 .where(buildPredicate(condition))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -38,31 +35,28 @@ public class PolicyRepositoryImpl implements PolicyRepositoryCustom {
         Long total = queryFactory
                 .select(policy.count())
                 .from(policy)
-                .leftJoin(policy.details, policyDetail)
                 .where(buildPredicate(condition))
                 .fetchOne();
 
-        if (total == null) {
-            total = 0L;
-        }
-
-        return new PageImpl<>(content, pageable, total);
+        return new PageImpl<>(content, pageable, total == null ? 0L : total);
     }
 
     private BooleanBuilder buildPredicate(PolicySearchCondition condition) {
         BooleanBuilder builder = new BooleanBuilder();
 
-        if (StringUtils.hasText(condition.getRegion())) {
-            builder.and(policyDetail.region.eq(condition.getRegion()));
-        }
-
-        if (condition.getTarget() != null) {
-            builder.and(policyDetail.target.eq(condition.getTarget()));
-        }
-
         if (StringUtils.hasText(condition.getKeyword())) {
             builder.and(policy.title.containsIgnoreCase(condition.getKeyword())
-                    .or(policy.summary.containsIgnoreCase(condition.getKeyword())));
+                    .or(policy.serviceSummary.containsIgnoreCase(condition.getKeyword()))
+                    .or(policy.supportContent.containsIgnoreCase(condition.getKeyword()))
+                    .or(policy.targetAudience.containsIgnoreCase(condition.getKeyword())));
+        }
+
+        if (StringUtils.hasText(condition.getCategory())) {
+            builder.and(policy.category.eq(condition.getCategory()));
+        }
+
+        if (StringUtils.hasText(condition.getUserType())) {
+            builder.and(policy.userType.eq(condition.getUserType()));
         }
 
         return builder;
@@ -79,8 +73,9 @@ public class PolicyRepositoryImpl implements PolicyRepositoryCustom {
                     String property = order.getProperty();
 
                     return switch (property) {
-                        case "deadline" -> asc ? policyDetail.deadline.asc() : policyDetail.deadline.desc();
                         case "title" -> asc ? policy.title.asc() : policy.title.desc();
+                        case "createdAt" -> asc ? policy.createdAt.asc() : policy.createdAt.desc();
+                        case "viewCount" -> asc ? policy.viewCount.asc() : policy.viewCount.desc();
                         default -> null;
                     };
                 })
