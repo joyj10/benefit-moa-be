@@ -88,3 +88,104 @@ API 명세는 `docs/` 디렉토리에서 상세 관리:
 - 벡터 검색 기반 유사 정책 추천
 
 ---
+
+## 로컬 개발 환경 실행 가이드
+### 1. 환경변수 파일(.env) 생성
+-  로컬 환경에서 개발을 진행하려면 데이터베이스 연결 및 보안 설정 등을 위한 두 개의 설정 파일 필요
+
+#### 1.1 Docker 데이터베이스 환경 설정 파일 (.env)
+- docker/mysql 디렉터리(docker-compose.yml 파일이 있는 위치)에 .env 파일 생성
+  - 이 파일은 Docker가 데이터베이스를 설정하는 데 사용
+- 아래 내용 복사 후 붙여 넣기
+```text
+# .env
+
+# MySQL 루트 계정의 비밀번호. 원하는 값으로 자유롭게 설정
+MYSQL_ROOT_PASSWORD=your_root_password
+
+# benefitmoa 데이터베이스의 benefitmoa_user 계정 비밀번호. 원하는 값으로 자유롭게 설정
+MYSQL_PASSWORD=your_user_password
+```
+
+#### 1.2 백엔드 애플리케이션 환경 설정 파일 (application-secret.yml)
+- backend/src/main/resources 디렉터리에 application-secret.yml 파일 생성
+  - 이 파일은 Spring Boot 애플리케이션이 데이터베이스와 통신하는 데 필요한 설정을 포함
+```text
+# src/main/resources/application-secret.yml
+
+# 위에 작성한 .env 파일의 MYSQL_PASSWORD 동일한 값을 사용
+DB_PASSWORD: your_user_password
+
+# 토큰 시크릿 키. JWT 인증에 사용(임의 변경 가능)
+JWT_SECRET: test-secret-key-12341234
+```
+※ 중요: .env와 application-secret.yml 파일은 Git에 의해 추적되지 않아야 함
+  - 이 파일들은 보안 정보를 포함하고 있으므로, .gitignore 파일에 추가하여 Git에 커밋되지 않도록 해야 함
+
+
+### 2. Docker 컨테이너 (MySQL) 실행
+- 터미널에서 프로젝트 루트 디렉터리로 이동한 후, 다음 명령어를 실행하여 Docker 컨테이너를 백그라운드에서 실행
+```bash
+docker compose up -d
+```
+- 이 명령어로 데이터베이스 컨테이너가 실행됨
+  - 컨테이너가 최초로 생성될 때 init.sql과 data.sql 스크립트가 실행되어 초기 데이터가 자동으로 설정
+
+### 3. 백엔드 애플리케이션 실행
+- 데이터베이스가 실행된 후, 백엔드 애플리케이션을 local 프로필로 실행
+  - local 프로필은 로컬 데이터베이스 설정을 사용하도록 지정
+
+#### 3.1 IntelliJ IDEA에서 실행
+- Run -> Edit Configurations... 로 이동
+- 실행할 Spring Boot 애플리케이션 설정 선택
+- Configuration 탭에서 Active profiles 필드를 찾아 local 입력
+- Apply와 OK를 눌러 설정을 저장한 후, 애플리케이션 실행
+
+#### 3.2 Visual Studio Code에서 실행
+1. VS Code용 Extension Pack for Java가 설치되어 있는지 확인 
+2. 2 .vscode/launch.json 파일을 열고, 아래와 같이 env 속성에 spring.profiles.active 추가
+```json
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Spring Boot App",
+      "request": "launch",
+      "mainClass": "com.benefitmoa.BenefitMoaApplication",
+      "projectName": "benefitmoa",
+      "env": {
+        "spring.profiles.active": "local"
+      }
+    }
+  ]
+}
+```
+
+3. Run and Debug 탭에서 설정한 구성으로 애플리케이션 실행
+
+---
+
+### [참고] 자주 사용하는 Docker 명령어
+- 컨테이너 중지:
+```bash
+docker compose down
+```
+
+- 컨테이너 상태 확인:
+```bash
+docker compose ps
+```
+
+- 컨테이너 로그 확인:
+```bash
+docker compose logs mysql
+```
+
+- 모든 데이터를 초기화하고 싶을 때 (주의!):
+  - 컨테이너와 함께 데이터 볼륨까지 삭제하여 완전히 깨끗한 상태에서 다시 시작하고 싶을 때 사용
+```bash
+docker compose down -v
+```
+
+이후 다시 docker compose up -d를 실행하면 초기 데이터 다시 세팅됨
