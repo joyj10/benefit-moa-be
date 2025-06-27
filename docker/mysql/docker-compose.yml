@@ -13,8 +13,13 @@ services:
       - "3306:3306"
     volumes:
       - mysql-data:/var/lib/mysql
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./init.sql:/docker-entrypoint-initdb.d/01_init.sql
+      - ./data.sql:/docker-entrypoint-initdb.d/02_data.sql
     restart: unless-stopped
+    # MySQL 서버 시작 시 기본 문자 집합을 utf8mb4로 설정하는 명령어
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
 
 volumes:
   mysql-data:

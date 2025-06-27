@@ -26,10 +26,11 @@ public class SecurityConfig {
                 .sessionManagement(sesseion -> sesseion.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/auth/**",                         // 인증 관련 API
-                                "/v3/api-docs/**",                  // swagger 문서
+                                "/auth/**",                        // 인증 관련 API
+                                "/v3/api-docs/**",                 // swagger 문서
                                 "/swagger-ui/**",                  // swagger UI
                                 "/swagger-ui.html",                // swagger HTML 접근
+                                "/swagger-ui/index.html",          // swagger index
                                 "/actuator/**"                     // actuator (옵션)
                         ).permitAll()
                         .anyRequest().authenticated() // 나머지 요청은 인증 필요
