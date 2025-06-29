@@ -26,7 +26,6 @@ public class AuthService {
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new InvalidException(EMAIL_ALREADY_EXISTS.getMessage());
         }
-
         String encodedPassword = passwordEncoder.encode(request.getPassword());
         userRepository.save(User.create(request.getEmail(), encodedPassword, request.getName(), request.getNickname(), request.getPhone()));
     }
