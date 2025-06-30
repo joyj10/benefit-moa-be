@@ -33,3 +33,9 @@ logging:
   level:
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+external:
+  gov:
+    api:
+      base-url: https://api.odcloud.kr/api/gov24/v3
+      key: ${GOV_API_KEY}

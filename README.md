@@ -118,6 +118,9 @@ DB_PASSWORD: benefitpass
 
 # 토큰 시크릿 키. JWT 인증에 사용(임의 변경 가능)
 JWT_SECRET: test-secret-key-1234123412341234
+
+# 공공 데이터 API 키 설정
+GOV_API_KEY: your_gov_api_key_here
 ```
 ※ 중요: .env와 application-secret.yml 파일은 Git에 의해 추적되지 않아야 함
   - 이 파일들은 보안 정보를 포함하고 있으므로, .gitignore 파일에 추가하여 Git에 커밋되지 않도록 해야 함
