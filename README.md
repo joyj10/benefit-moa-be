@@ -104,7 +104,7 @@ API 명세는 `docs/` 디렉토리에서 상세 관리:
 MYSQL_ROOT_PASSWORD=your_root_password
 
 # benefitmoa 데이터베이스의 benefitmoa_user 계정 비밀번호. 원하는 값으로 자유롭게 설정
-MYSQL_PASSWORD=your_user_password
+MYSQL_PASSWORD=benefitpass
 ```
 
 #### 1.2 백엔드 애플리케이션 환경 설정 파일 (application-secret.yml)
@@ -114,7 +114,7 @@ MYSQL_PASSWORD=your_user_password
 # src/main/resources/application-secret.yml
 
 # 위에 작성한 .env 파일의 MYSQL_PASSWORD 동일한 값을 사용
-DB_PASSWORD: your_user_password
+DB_PASSWORD: benefitpass
 
 # 토큰 시크릿 키. JWT 인증에 사용(임의 변경 가능)
 JWT_SECRET: test-secret-key-12341234
