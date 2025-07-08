@@ -192,3 +192,68 @@ docker compose down -v
 ```
 
 이후 다시 docker compose up -d를 실행하면 초기 데이터 다시 세팅됨
+
+
+## Batch 모듈 안내
+
+`com.benefitmoa.batch` 디렉토리는 외부 공공 API로부터 정책 데이터를 주기적으로 수집하여  
+내부 시스템(DB)에 저장하는 **배치 처리 로직**을 구성한 공간입니다.
+
+---
+
+### 📌 배치 목적
+
+- 공공 정책 데이터를 외부 API로부터 정기적으로 수집
+- 수집된 데이터를 변환/정제하여 DB에 저장
+- 스케줄링을 통한 자동 실행 및 무중단 운영
+
+---
+
+### 📂 디렉토리 구조
+```text
+com.benefitmoa.batch
+├── job             # 배치 처리 흐름 정의
+│ └── GovPolicyBatchJob.java
+├── scheduler       # 스케줄링 트리거 정의
+│ └── GovPolicyScheduler.java
+├── processor       # 데이터 가공/검증 처리
+│ └── GovPolicyProcessor.java
+└── writer          # Repository 저장 처리
+└── GovPolicyWriter.java
+```
+
+---
+
+### 🧩 클래스 설명
+
+| 클래스 | 역할 |
+|--------|------|
+| `GovPolicyScheduler` | `@Scheduled`를 통해 주기적으로 배치 작업 실행 |
+| `GovPolicyBatchJob`  | 전체 배치 흐름 구성: API 호출 → 가공 → 저장 |
+| `GovPolicyProcessor` | 외부 API 응답 DTO를 내부 Entity로 변환 |
+| `GovPolicyWriter`    | 변환된 데이터를 DB에 저장 (중복 체크 가능) |
+
+### 🔄 배치 처리 흐름도
+
+```mermaid
+flowchart TD
+  A[GovPolicyScheduler\n스케줄링 트리거] --> B[GovPolicyBatchJob\n배치 실행 흐름]
+  B --> C[GovApiService\n외부 API 호출]
+  C --> D[List<GovPolicyDto>\n정책 응답 DTO 목록]
+  D --> E[GovPolicyProcessor\nDTO → Entity 변환]
+  E --> F[Policy Entity]
+  F --> G[GovPolicyWriter\nDB 저장 처리]
+```
+---
+
+### ⏰ 실행 스케줄
+
+- **실행 시각**: 매일 오전 3시
+- **Cron 표현식**: `0 0 3 * * *`
+
+```java
+@Scheduled(cron = "0 0 3 * * *")
+public void runPolicyBatch() {
+    govPolicyBatchJob.run();
+}
+```

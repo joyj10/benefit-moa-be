@@ -1,17 +1,17 @@
 package com.benefitmoa.domain.policy.entity;
 
+import com.benefitmoa.client.gov.dto.GovPolicyDto;
 import com.benefitmoa.domain.common.BaseTimeEntity;
 import com.benefitmoa.domain.policy.dto.PolicyRequest;
-import com.benefitmoa.domain.policy.dto.PublicDataPolicy;
 import com.benefitmoa.global.exception.InvalidException;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Builder(access = AccessLevel.PRIVATE)
 public class Policy extends BaseTimeEntity {
 
     @Id
@@ -50,6 +50,7 @@ public class Policy extends BaseTimeEntity {
     @Column(length = 1000)
     private String applicationMethod; // 신청 방법
 
+    @Column(length = 1000)
     private String contact; // 전화 문의
     private String receptionAgency; // 접수 기관
 
@@ -66,104 +67,58 @@ public class Policy extends BaseTimeEntity {
     private int viewCount; // 조회 수
 
 
-    public static Policy from(PublicDataPolicy dto) {
-        validate(dto.getTitle(), dto.getServiceSummary(), dto.getUserType(), dto.getCategory());
-        return new Policy(
-                dto.getTitle(),
-                dto.getUserType(),
-                dto.getDetailUrl(),
-                dto.getServiceSummary(),
-                dto.getCategory(),
-                dto.getSelectionCriteria(),
-                dto.getSupportContent(),
-                dto.getTargetAudience(),
-                dto.getSupportType(),
-                dto.getApplicationPeriod(),
-                dto.getApplicationMethod(),
-                dto.getContact(),
-                dto.getReceptionAgency(),
-                dto.getServiceId(),
-                dto.getDepartmentName(),
-                dto.getOrganizationName(),
-                dto.getOrganizationType(),
-                dto.getOrganizationCode(),
-                dto.getPolicyCreatedAt(),
-                dto.getPolicyUpdatedAt(),
-                dto.getViewCount()
-        );
-    }
-
     public static Policy from(PolicyRequest request) {
         validate(request.getTitle(), request.getServiceSummary(), request.getUserType(), request.getCategory());
-        return new Policy(
-                request.getTitle(),
-                request.getUserType(),
-                request.getDetailUrl(),
-                request.getServiceSummary(),
-                request.getCategory(),
-                request.getSelectionCriteria(),
-                request.getSupportContent(),
-                request.getTargetAudience(),
-                request.getSupportType(),
-                request.getApplicationPeriod(),
-                request.getApplicationMethod(),
-                request.getContact(),
-                request.getReceptionAgency(),
-                request.getServiceId(),
-                request.getDepartmentName(),
-                request.getOrganizationName(),
-                request.getOrganizationType(),
-                request.getOrganizationCode(),
-                null,
-                null,
-                0
-        );
+        return Policy.builder()
+                .title(request.getTitle())
+                .userType(request.getUserType())
+                .detailUrl(request.getDetailUrl())
+                .serviceSummary(request.getServiceSummary())
+                .category(request.getCategory())
+                .selectionCriteria(request.getSelectionCriteria())
+                .supportContent(request.getSupportContent())
+                .targetAudience(request.getTargetAudience())
+                .supportType(request.getSupportType())
+                .applicationPeriod(request.getApplicationPeriod())
+                .applicationMethod(request.getApplicationMethod())
+                .contact(request.getContact())
+                .receptionAgency(request.getReceptionAgency())
+                .serviceId(request.getServiceId())
+                .departmentName(request.getDepartmentName())
+                .organizationName(request.getOrganizationName())
+                .organizationType(request.getOrganizationType())
+                .organizationCode(request.getOrganizationCode())
+                .policyCreatedAt(null)
+                .policyUpdatedAt(null)
+                .viewCount(0)
+                .build();
     }
 
-    private Policy(
-            String title,
-            String userType,
-            String detailUrl,
-            String serviceSummary,
-            String category,
-            String selectionCriteria,
-            String supportContent,
-            String targetAudience,
-            String supportType,
-            String applicationPeriod,
-            String applicationMethod,
-            String contact,
-            String receptionAgency,
-            String serviceId,
-            String departmentName,
-            String organizationName,
-            String organizationType,
-            String organizationCode,
-            String policyCreatedAt,
-            String policyUpdatedAt,
-            int viewCount
-    ) {
-        this.title = title;
-        this.userType = userType;
-        this.detailUrl = detailUrl;
-        this.serviceSummary = serviceSummary;
-        this.category = category;
-        this.selectionCriteria = selectionCriteria;
-        this.supportContent = supportContent;
-        this.targetAudience = targetAudience;
-        this.supportType = supportType;
-        this.applicationPeriod = applicationPeriod;
-        this.applicationMethod = applicationMethod;
-        this.contact = contact;
-        this.receptionAgency = receptionAgency;
-        this.serviceId = serviceId;
-        this.departmentName = departmentName;
-        this.organizationName = organizationName;
-        this.organizationType = organizationType;
-        this.organizationCode = organizationCode;
-        this.policyCreatedAt = policyCreatedAt;
-        this.policyUpdatedAt = policyUpdatedAt;
-        this.viewCount = viewCount;
+    public static Policy from(GovPolicyDto dto) {
+        validate(dto.getServiceName(), dto.getServiceSummary(), dto.getUserType(), dto.getServiceCategory());
+        return Policy.builder()
+                .title(dto.getServiceName())                      // 서비스명 → title
+                .userType(dto.getUserType())                      // 사용자구분
+                .serviceSummary(dto.getServiceSummary())          // 서비스목적요약
+                .category(dto.getServiceCategory())               // 서비스분야
+                .detailUrl(dto.getDetailUrl())                    // 상세조회URL
+                .selectionCriteria(dto.getSelectionCriteria())    // 선정기준
+                .supportContent(dto.getSupportContent())          // 지원내용
+                .targetAudience(dto.getSupportTarget())           // 지원대상
+                .supportType(dto.getSupportType())                // 지원유형
+                .applicationPeriod(dto.getApplicationPeriod())    // 신청기한
+                .applicationMethod(dto.getApplicationMethod())    // 신청방법
+                .contact(dto.getContact())                        // 전화문의
+                .receptionAgency(dto.getReceptionAgency())        // 접수기관
+                .serviceId(dto.getServiceId())                    // 서비스ID
+                .departmentName(dto.getTeamName())                // 부서명
+                .organizationName(dto.getDepartmentName())        // 소관기관명
+                .organizationType(dto.getDepartmentType())        // 소관기관유형
+                .organizationCode(dto.getDepartmentCode())        // 소관기관코드
+                .policyCreatedAt(dto.getCreatedAt())              // 등록일시
+                .policyUpdatedAt(dto.getUpdatedAt())              // 수정일시
+                .viewCount(dto.getViewCount())                    // 조회수
+                .build();
     }
 
     public void update(PolicyRequest request) {
